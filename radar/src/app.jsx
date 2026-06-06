@@ -9,6 +9,7 @@ import Scoreboard from "./components/scoreboard";
 import KillFeed from "./components/killfeed";
 import { BRAND_ICON, BRAND_NAME, WS_PATH } from "./brand";
 import SupportButton from "./components/SupportButton";
+import ShareRadarButton from "./components/ShareRadarButton";
 
 const CONNECTION_TIMEOUT = 5000;
 
@@ -71,7 +72,7 @@ const loadSettings = () => {
 const RadarColumn = ({
   roundInfo, localTeam, playerArray, mapData, averageLatency,
   bombData, grenadeArray, settings,
-  publicIP, copied, copyAddress, setSettings,
+  publicIP, setSettings,
 }) => (
   <div className="flex flex-col items-center gap-2 flex-1" style={{ height: "100%", width: "100%", minHeight: 0 }}>
     <Radar
@@ -85,8 +86,6 @@ const RadarColumn = ({
       roundInfo={roundInfo}
       settings={settings}
       publicIP={publicIP}
-      copied={copied}
-      copyAddress={copyAddress}
       setSettings={setSettings}
     />
     {/* Kill feed – only visible outside fullscreen */}
@@ -108,7 +107,6 @@ const App = () => {
   const [publicIP, setPublicIP]             = useState(null);
   const [showTeamList, setShowTeamList]     = useState("both");
   const [isMobile, setIsMobile]             = useState(false);
-  const [copied, setCopied]                 = useState(false);
   const [radarFullscreen, setRadarFullscreen] = useState(false);
   const wsRef                               = useRef(null);
 
@@ -164,25 +162,6 @@ const App = () => {
     } catch {
       // WS broadcast is the primary path
     }
-  };
-
-  const copyAddress = () => {
-    if (!publicIP) return;
-    const text = `${publicIP}:5173`;
-    if (navigator.clipboard && window.isSecureContext) {
-      navigator.clipboard.writeText(text);
-    } else {
-      const textarea = document.createElement("textarea");
-      textarea.value = text;
-      textarea.style.position = "fixed";
-      textarea.style.opacity = "0";
-      document.body.appendChild(textarea);
-      textarea.select();
-      document.execCommand("copy");
-      textarea.remove();
-    }
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
   };
 
   /* ── WebSocket with exponential-backoff reconnect ────────────────────────── */
@@ -408,32 +387,7 @@ const App = () => {
         <div style={{ display: "flex", alignItems: "center", gap: 8, justifySelf: "end" }}>
         <SupportButton />
 
-        {/* Share Radar */}
-        {publicIP && (
-          <button
-            onClick={copyAddress}
-            disabled={copied}
-            style={{
-              display: "flex", alignItems: "center", gap: 6,
-              padding: "6px 12px", borderRadius: 6,
-              background: "transparent",
-              border: "1px solid var(--bg-border-dim)",
-              color: copied ? "var(--hp-high)" : "var(--text-secondary)",
-              fontSize: 12, fontWeight: 700, cursor: "pointer",
-              fontFamily: "inherit", letterSpacing: "0.04em", transition: "all 0.15s",
-            }}
-            onMouseEnter={e => { if (!copied) { e.currentTarget.style.borderColor = "var(--bg-border)"; e.currentTarget.style.color = "var(--text-primary)"; }}}
-            onMouseLeave={e => { if (!copied) { e.currentTarget.style.borderColor = "var(--bg-border-dim)"; e.currentTarget.style.color = "var(--text-secondary)"; }}}
-          >
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              {copied
-                ? <path d="M20 6L9 17l-5-5" />
-                : <><rect x="9" y="9" width="13" height="13" rx="2" /><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" /></>
-              }
-            </svg>
-            {copied ? "Copied!" : "Share Radar"}
-          </button>
-        )}
+        <ShareRadarButton publicIP={publicIP} />
 
         {playerArray.length > 0 && mapData && (
           <button
@@ -500,7 +454,7 @@ const App = () => {
                     roundInfo={roundInfo} localTeam={localTeam} playerArray={playerArray}
                     mapData={mapData} averageLatency={averageLatency} bombData={bombData}
                     grenadeArray={grenadeArray} settings={settings}
-                    publicIP={publicIP} copied={copied} copyAddress={copyAddress} setSettings={setSettings}
+                    publicIP={publicIP} setSettings={setSettings}
                   />
                 </div>
 
@@ -559,7 +513,7 @@ const App = () => {
                   roundInfo={roundInfo} localTeam={localTeam} playerArray={playerArray}
                   mapData={mapData} averageLatency={averageLatency} bombData={bombData}
                   grenadeArray={grenadeArray} settings={settings}
-                  publicIP={publicIP} copied={copied} copyAddress={copyAddress} setSettings={setSettings}
+                  publicIP={publicIP} setSettings={setSettings}
                 />
 
                 {/* CT side */}

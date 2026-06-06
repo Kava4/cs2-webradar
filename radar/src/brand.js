@@ -3,6 +3,21 @@ export const BRAND_SHORT = "AimSync";
 export const BRAND_LOGO = "/logo.png";
 export const BRAND_ICON = "/icons/icon-96x96.png";
 export const WS_PATH = "/aimsync_webradar";
+export const RADAR_HTTP_PORT = 5173;
+
+const isValidPublicIp = (ip) =>
+  ip && ip !== "Unavailable" && /^(\d{1,3}\.){3}\d{1,3}$/.test(ip);
+
+export const getShareTargets = (publicIP) => {
+  const port = RADAR_HTTP_PORT;
+  const host = typeof window !== "undefined" ? window.location.hostname : "";
+  const lanUrl = host ? `http://${host}:${port}` : null;
+  const publicUrl = isValidPublicIp(publicIP) ? `http://${publicIP}:${port}` : null;
+  const primaryUrl = publicUrl || lanUrl;
+  const copyText = primaryUrl ? primaryUrl.replace(/^https?:\/\//, "") : null;
+
+  return { publicUrl, lanUrl, primaryUrl, copyText };
+};
 
 export const SUPPORT_LINKS = {
   kofi: "https://ko-fi.com/kava4",

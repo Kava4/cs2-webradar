@@ -7,6 +7,7 @@ import Scoreboard from "./scoreboard";
 import KillFeed from "./killfeed";
 import { Latency } from "./latency";
 import SupportButton from "./SupportButton";
+import ShareRadarButton from "./ShareRadarButton";
 
 const MIN_ZOOM = 1.0;
 const MAX_ZOOM = 6.0;
@@ -23,8 +24,6 @@ const Radar = ({
   grenadeArray = [],
   roundInfo = null,
   publicIP    = null,
-  copied      = false,
-  copyAddress = null,
   setSettings = null,
 }) => {
   const containerRef  = useRef();
@@ -221,23 +220,7 @@ const Radar = ({
           </div>
           <div style={{ display: "flex", alignItems: "center", gap: 8, justifySelf: "end" }}>
             <SupportButton />
-            {publicIP && copyAddress && (
-              <button onClick={copyAddress} disabled={copied} style={{
-                display: "flex", alignItems: "center", gap: 6,
-                padding: "5px 11px", borderRadius: 6, background: "transparent",
-                border: `1px solid ${copied ? "var(--hp-high)" : "var(--bg-border-dim)"}`,
-                color: copied ? "var(--hp-high)" : "var(--text-secondary)",
-                fontSize: 12, fontWeight: 700, cursor: "pointer",
-                fontFamily: "inherit", letterSpacing: "0.04em", transition: "all 0.15s",
-              }}>
-                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  {copied
-                    ? <path d="M20 6L9 17l-5-5" />
-                    : <><rect x="9" y="9" width="13" height="13" rx="2" /><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" /></>}
-                </svg>
-                {copied ? "Copied!" : "Share"}
-              </button>
-            )}
+            <ShareRadarButton publicIP={publicIP} compact />
             {setSettings && <Latency settings={settings} setSettings={setSettings} />}
             <button onClick={toggleFullscreen} style={{
               display: "flex", alignItems: "center", gap: 5,
