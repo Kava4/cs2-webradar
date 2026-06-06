@@ -1,0 +1,178 @@
+@import './mobile.css';
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@font-face {
+  font-family: "TASAOrbiter";
+  src: url("./assets/typefaces/TASAOrbiterVF.woff2");
+}
+
+/* ─── Design Tokens ─────────────────────────────────────────────────────────── */
+:root {
+  /* Core palette */
+  --bg-base:        #080b0f;
+  --bg-panel:       #0d1117;
+  --bg-card:        #111620;
+  --bg-card-hover:  #161c28;
+  --bg-border:      #1e2736;
+  --bg-border-dim:  #151c27;
+
+  /* Team colors */
+  --t-color:        #f5a623;
+  --t-dim:          rgba(245,166,35,0.12);
+  --t-border:       rgba(245,166,35,0.22);
+  --ct-color:       #0084ff;
+  --ct-dim:         rgba(0,132,255,0.12);
+  --ct-border:      rgba(0,132,255,0.22);
+
+  /* Text */
+  --text-primary:   #ffffff;
+  --text-secondary: #c2c2c2;
+  --text-muted:     #2e3d50;
+
+  /* Status */
+  --hp-high:   #3dd68c;
+  --hp-mid:    #f0b429;
+  --hp-low:    #e05252;
+  --money:     #3dd68c;
+
+  /* Sizing */
+  --card-radius: 6px;
+  --panel-radius: 8px;
+}
+
+/* ─── Reset & Base ──────────────────────────────────────────────────────────── */
+* {
+  outline-offset: 4px;
+  box-sizing: border-box;
+}
+
+html, body {
+  margin: 0;
+  overscroll-behavior: none;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  font-family: "TASAOrbiter", "Rajdhani", ui-monospace, monospace;
+  color: var(--text-primary);
+  background: var(--bg-base);
+}
+
+/* ─── Scrollbar ─────────────────────────────────────────────────────────────── */
+.no-scrollbar::-webkit-scrollbar { display: none; }
+.no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--bg-border); border-radius: 2px; }
+
+/* ─── Team header labels ────────────────────────────────────────────────────── */
+.team-label {
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  line-height: 1;
+}
+
+.team-label-t  { color: var(--t-color); }
+.team-label-ct { color: var(--ct-color); }
+
+/* ─── Player card ───────────────────────────────────────────────────────────── */
+.player-card {
+  position: relative;
+  display: flex;
+  align-items: stretch;
+  overflow: hidden;
+  border-radius: var(--card-radius);
+  background: var(--bg-card);
+  border: 1px solid var(--bg-border-dim);
+  transition: border-color 0.2s, background 0.2s;
+  min-height: 72px;
+}
+
+.player-card:hover {
+  background: var(--bg-card-hover);
+  border-color: var(--bg-border);
+}
+
+.player-card.dead {
+  opacity: 0.38;
+  filter: grayscale(0.6);
+}
+
+/* ─── Scoreboard ────────────────────────────────────────────────────────────── */
+.scoreboard {
+  display: flex;
+  align-items: stretch;
+  border-radius: var(--panel-radius);
+  overflow: hidden;
+  border: 1px solid var(--bg-border);
+  background: var(--bg-panel);
+}
+
+/* ─── Settings panel ────────────────────────────────────────────────────────── */
+.settings-panel {
+  background: var(--bg-panel);
+  border: 1px solid var(--bg-border);
+  border-radius: var(--panel-radius);
+  box-shadow: 0 16px 48px rgba(0,0,0,0.7);
+}
+
+/* ─── Utility: hairline separator ──────────────────────────────────────────── */
+.sep {
+  height: 1px;
+  background: var(--bg-border-dim);
+}
+
+/* ─── Pulse animations ──────────────────────────────────────────────────────── */
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.55; }
+}
+
+@keyframes phasePulse {
+  0% { opacity: 0.6; }
+  100% { opacity: 1; }
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.animate-spin { animation: spin 1s linear infinite; }
+.animate-pulse { animation: pulse 1.8s ease-in-out infinite; }
+
+/* ─── Connecting screen ─────────────────────────────────────────────────────── */
+.connecting-ring {
+  width: 44px;
+  height: 44px;
+  border: 2px solid var(--bg-border);
+  border-top-color: var(--ct-color);
+  border-radius: 50%;
+  animation: spin 0.9s linear infinite;
+}
+
+/* ─── Touch ─────────────────────────────────────────────────────────────────── */
+.touch-manipulation {
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+}
+
+/* ─── Mobile safe areas ─────────────────────────────────────────────────────── */
+@supports (padding: env(safe-area-inset-bottom)) {
+  .mobile-safe-bottom { padding-bottom: max(1rem, env(safe-area-inset-bottom)); }
+  .mobile-safe-top { padding-top: max(0.5rem, env(safe-area-inset-top)); }
+}
+
+/* ─── Reduce motion ─────────────────────────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}

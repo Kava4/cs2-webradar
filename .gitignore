@@ -1,0 +1,73 @@
+# ── OS ────────────────────────────────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# ── Editors / IDE ───────────────────────────────────────────────────────────
+.vs/
+.idea/
+.vscode/*
+!.vscode/extensions.json
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+*.sw?
+
+# ── Client (C++) ────────────────────────────────────────────────────────────
+client/.vs/
+client/x64/
+client/Release/
+client/release/
+client/Debug/
+client/debug/
+client/vcpkg_installed/
+client/aimsync_webradar_server.exe
+client/app.ico
+
+# ── Map assets (generated / synced copies) ──────────────────────────────────
+# Source of truth: client/data/  (committed)
+radar/public/data/
+
+# Source art / editor files
+*.psd
+
+# ── Radar (Node / React) ────────────────────────────────────────────────────
+radar/node_modules/
+radar/dist/
+radar/dist-ssr/
+radar/*.local
+
+radar/ws/node_modules/
+radar/ws/dist/
+radar/ws/release/
+
+# ── Build outputs ─────────────────────────────────────────────────────────────
+*.exe
+*.pdb
+*.ilk
+*.obj
+*.iobj
+*.ipdb
+*.tlog
+*.log
+*.lastbuildstate
+*.idb
+*.pch
+
+# ── Logs / env ──────────────────────────────────────────────────────────────
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+.env
+.env.*
+
+# ── Python ──────────────────────────────────────────────────────────────────
+__pycache__/
+*.pyc
+
+# ── User config (runtime, never commit) ─────────────────────────────────────
+config.json

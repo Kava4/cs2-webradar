@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes, viewport-fit=cover" />
+  
+  <!-- PWA Meta Tags -->
+  <meta name="theme-color" content="#0084ff" />
+  <meta name="description" content="AimSync WebRadar - real-time Counter-Strike 2 tactical radar" />
+  
+  <!-- iOS Specific Meta Tags -->
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="AimSync" />
+  
+  <!-- iOS Splash Screens (iPhone 14 Pro Max and other sizes) -->
+  <link rel="apple-touch-startup-image" href="/splash/iphone-14-pro-max-splash.png" media="(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3)">
+  <link rel="apple-touch-startup-image" href="/splash/iphone-14-pro-splash.png" media="(device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3)">
+  <link rel="apple-touch-startup-image" href="/splash/iphone-14-splash.png" media="(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3)">
+  <link rel="apple-touch-startup-image" href="/splash/iphone-13-splash.png" media="(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3)">
+  <link rel="apple-touch-startup-image" href="/splash/iphone-12-splash.png" media="(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3)">
+  
+  <!-- iOS App Icons -->
+  <link rel="apple-touch-icon" href="/icons/apple-touch-icon-180x180.png" />
+  <link rel="apple-touch-icon" sizes="152x152" href="/icons/apple-touch-icon-152x152.png" />
+  <link rel="apple-touch-icon" sizes="167x167" href="/icons/apple-touch-icon-167x167.png" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/icons/apple-touch-icon-180x180.png" />
+  
+  <!-- Standard Favicon -->
+  <link rel="icon" type="image/png" sizes="32x32" href="/icons/favicon-32x32.png" />
+  <link rel="icon" type="image/png" sizes="16x16" href="/icons/favicon-16x16.png" />
+  
+  <!-- PWA Manifest -->
+  <link rel="manifest" href="/manifest.json" />
+  
+  <title>AimSync WebRadar</title>
+</head>
+<body>
+  <div id="root"></div>
+  
+  <!-- Service Worker Registration -->
+  <script>
+    // Register Service Worker for PWA
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker
+          .register('/service-worker.js')
+          .then((registration) => {
+            console.log('✅ Service Worker registered:', registration.scope);
+            
+            // Check for updates
+            registration.addEventListener('updatefound', () => {
+              const newWorker = registration.installing;
+              newWorker.addEventListener('statechange', () => {
+                if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                  // New version available
+                  console.log('🆕 New version available! Please refresh.');
+                  if (confirm('New version available! Refresh to update?')) {
+                    newWorker.postMessage({ type: 'SKIP_WAITING' });
+                    window.location.reload();
+                  }
+                }
+              });
+            });
+          })
+          .catch((error) => {
+            console.error('❌ Service Worker registration failed:', error);
+          });
+
+        // Handle service worker updates
+        let refreshing = false;
+        navigator.serviceWorker.addEventListener('controllerchange', () => {
+          if (!refreshing) {
+            refreshing = true;
+            window.location.reload();
+          }
+        });
+      });
+    }
+
+    // PWA Install Prompt (for Android and Desktop)
+    let deferredPrompt;
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      deferredPrompt = e;
+      console.log('💾 PWA Install prompt available');
+      
+      // You can show a custom install button here
+      // Example: showInstallButton();
+    });
+
+    // Track PWA installation
+    window.addEventListener('appinstalled', () => {
+      console.log('✅ PWA installed successfully!');
+      deferredPrompt = null;
+    });
+
+    // Detect if running in standalone mode (installed PWA)
+    if (window.matchMedia('(display-mode: standalone)').matches) {
+      console.log('🚀 Running as installed PWA');
+      document.body.classList.add('standalone-mode');
+    }
+
+    // iOS standalone detection
+    if (('standalone' in window.navigator) && window.navigator.standalone) {
+      console.log('🍎 Running as iOS PWA');
+      document.body.classList.add('ios-standalone-mode');
+    }
+  </script>
+  
+  <script type="module" src="/src/main.jsx"></script>
+</body>
+</html>

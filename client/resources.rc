@@ -1,0 +1,4 @@
+#include "resource_ids.h"
+
+IDR_SERVER_EXE  RCDATA  "aimsync_webradar_server.exe"
+IDR_LOGO_PNG    RCDATA  "logo.png"

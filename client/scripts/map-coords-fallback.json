@@ -1,0 +1,16 @@
+{
+	"ar_baggage": { "x": -2150, "y": 2280, "scale": 4 },
+	"ar_shoots": { "x": -2150, "y": 2582, "scale": 4 },
+	"ar_shoots_night": { "x": -2150, "y": 2582, "scale": 4 },
+	"de_ancient_night": { "x": -2953, "y": 2164, "scale": 5 },
+	"de_basalt": { "x": -2345.6, "y": 2391.8, "scale": 4.37 },
+	"de_cache": { "x": -2000, "y": 3250, "scale": 5.5 },
+	"de_canals": { "x": -2496, "y": 1792, "scale": 4 },
+	"de_cbble": { "x": -3840, "y": 3072, "scale": 6 },
+	"de_dust": { "x": -2850, "y": 4073, "scale": 6 },
+	"de_edin": { "x": -383.30038, "y": 4420.2134, "scale": 4.803717 },
+	"de_jura": { "x": -2126.9092, "y": 2389.8, "scale": 5.008376 },
+	"de_lake": { "x": 1200, "y": -700, "scale": 5.2 },
+	"de_mills": { "x": -4810, "y": -320, "scale": 5.148437 },
+	"de_sugarcane": { "x": -4015, "y": 2000, "scale": 4.25 }
+}

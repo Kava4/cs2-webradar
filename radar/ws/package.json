@@ -1,0 +1,25 @@
+{
+  "name": "aimsync_webradar_server",
+  "version": "1.0.0",
+  "description": "AimSync WebRadar combined server",
+  "main": "server.js",
+  "bin": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "build-server": "npx pkg . --compress GZip --out-path release"
+  },
+  "dependencies": {
+    "ws": "^8.18.0"
+  },
+  "devDependencies": {
+    "pkg": "^5.8.1"
+  },
+  "pkg": {
+    "scripts": "server.js",
+    "assets": [
+      "dist/**/*"
+    ],
+    "targets": ["node18-win-x64"],
+    "outputPath": "release"
+  }
+}

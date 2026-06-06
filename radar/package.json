@@ -1,0 +1,31 @@
+{
+  "name": "aimsync_webradar",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "sync:maps": "node -e \"const fs=require('fs');const p=require('path');const s=p.resolve('..','client','data');const d=p.resolve('public','data');if(!fs.existsSync(s))throw new Error('Missing ../client/data');fs.rmSync(d,{recursive:true,force:true});fs.cpSync(s,d,{recursive:true});\"",
+    "dev": "npm run sync:maps && concurrently \"node ws/app.js\" \"vite\"",
+    "build": "vite build",
+    "build:all": "vite build && npm run copy:dist && npm run pkg:server",
+    "copy:dist": "node -e \"const fs=require('fs');fs.rmSync('ws/dist',{recursive:true,force:true});fs.cpSync('dist','ws/dist',{recursive:true})\"",
+    "pkg:server": "cd ws && npm install && npm run build-server",
+    "preview": "vite preview",
+    "start:server": "node ws/server.js"
+  },
+  "dependencies": {
+    "concurrently": "^9.0.1",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "ws": "^8.18.0"
+  },
+  "devDependencies": {
+    "@types/react": "^18.2.15",
+    "@types/react-dom": "^18.2.7",
+    "@vitejs/plugin-react": "^4.0.3",
+    "autoprefixer": "^10.4.16",
+    "postcss": "^8.4.31",
+    "tailwindcss": "^3.3.3",
+    "vite": "^4.4.5"
+  }
+}
