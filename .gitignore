@@ -57,6 +57,7 @@ radar/ws/release/
 
 # ── Logs / env ──────────────────────────────────────────────────────────────
 logs/
+.tmp_frames/
 *.log
 npm-debug.log*
 yarn-debug.log*
