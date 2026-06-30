@@ -6,78 +6,51 @@ const radiusToPx = (gameUnits, imgWidth, scale) => {
   return (gameUnits / scale / 1024) * imgWidth * 2;
 };
 
-// ─── SMOKE — solid, opaque cloud that actually blocks view ───────────────────
+// ─── SMOKE — CS2-style soft cloud (no hard ring, no label) ─────────────────
 const SmokeEffect = ({ diameter }) => (
   <>
     <style>{`
-      @keyframes smokeRotate { from{transform:rotate(0deg)} to{transform:rotate(360deg)} }
-      @keyframes smokePulse  { 0%,100%{opacity:.92;transform:scale(1)} 50%{opacity:1;transform:scale(1.03)} }
-      @keyframes smokeBlob1  { 0%,100%{transform:translate(0,0)scale(1)} 50%{transform:translate(5px,-4px)scale(1.07)} }
-      @keyframes smokeBlob2  { 0%,100%{transform:translate(0,0)scale(1)} 50%{transform:translate(-4px,5px)scale(1.06)} }
-      @keyframes smokeBlob3  { 0%,100%{transform:translate(0,0)scale(1)} 50%{transform:translate(3px,3px)scale(1.05)} }
-      @keyframes smokeBlob4  { 0%,100%{transform:translate(0,0)scale(1)} 50%{transform:translate(-3px,-3px)scale(1.04)} }
+      @keyframes smokePulse  { 0%,100%{opacity:.9;transform:scale(1)} 50%{opacity:1;transform:scale(1.02)} }
+      @keyframes smokeDrift1 { 0%,100%{transform:translate(0,0)scale(1)} 50%{transform:translate(4px,-3px)scale(1.04)} }
+      @keyframes smokeDrift2 { 0%,100%{transform:translate(0,0)scale(1)} 50%{transform:translate(-3px,4px)scale(1.03)} }
+      @keyframes smokeDrift3 { 0%,100%{transform:translate(0,0)scale(1)} 50%{transform:translate(2px,2px)scale(1.02)} }
     `}</style>
     <div style={{
       position: "absolute", width: diameter, height: diameter,
       left: "50%", top: "50%",
       transform: "translate(-50%, -50%)",
-      borderRadius: "50%", overflow: "visible", zIndex: 1,
+      pointerEvents: "none", zIndex: 1,
+      filter: "blur(0.6px)",
     }}>
-      {/* Hard outer edge ring */}
       <div style={{
-        position: "absolute", inset: 0, borderRadius: "50%",
-        border: "2px solid rgba(200,210,220,0.55)",
-        boxShadow: "0 0 12px rgba(180,190,200,0.35), inset 0 0 20px rgba(180,190,200,0.15)",
-        animation: "smokeRotate 18s linear infinite",
-      }} />
-      {/* Solid fill base — this is the "blocking" layer */}
-      <div style={{
-        position: "absolute", inset: "3%", borderRadius: "50%",
-        background: "radial-gradient(circle at 50% 50%, rgba(210,220,228,0.88) 0%, rgba(185,198,208,0.82) 30%, rgba(155,170,180,0.72) 60%, rgba(120,135,145,0.45) 80%, transparent 100%)",
-        backdropFilter: "blur(2px)",
-        animation: "smokePulse 4s ease-in-out infinite",
-      }} />
-      {/* Bright center highlight */}
-      <div style={{
-        position: "absolute", width: "50%", height: "50%", top: "15%", left: "25%",
+        position: "absolute", inset: "-6%",
         borderRadius: "50%",
-        background: "radial-gradient(circle, rgba(235,242,248,0.75) 0%, rgba(210,222,232,0.50) 50%, transparent 100%)",
-        animation: "smokeBlob1 5s ease-in-out infinite",
+        background: `
+          radial-gradient(ellipse 58% 52% at 44% 40%, rgba(228,235,242,0.94) 0%, transparent 72%),
+          radial-gradient(ellipse 52% 58% at 64% 58%, rgba(188,200,212,0.82) 0%, transparent 74%),
+          radial-gradient(ellipse 48% 50% at 28% 66%, rgba(170,184,196,0.76) 0%, transparent 70%),
+          radial-gradient(ellipse 62% 62% at 50% 50%, rgba(155,168,180,0.62) 0%, rgba(135,148,160,0.28) 58%, transparent 88%)
+        `,
+        animation: "smokePulse 5s ease-in-out infinite",
       }} />
-      {/* Mid blob bottom-right */}
       <div style={{
-        position: "absolute", width: "52%", height: "52%", bottom: "6%", right: "8%",
+        position: "absolute", width: "46%", height: "46%", top: "14%", left: "22%",
         borderRadius: "50%",
-        background: "radial-gradient(circle, rgba(200,212,222,0.65) 0%, rgba(165,178,188,0.40) 60%, transparent 100%)",
-        animation: "smokeBlob2 6s ease-in-out infinite",
+        background: "radial-gradient(circle, rgba(238,244,250,0.82) 0%, transparent 72%)",
+        animation: "smokeDrift1 6s ease-in-out infinite",
       }} />
-      {/* Edge blob top-right */}
       <div style={{
-        position: "absolute", width: "42%", height: "42%", top: "28%", right: "6%",
+        position: "absolute", width: "50%", height: "50%", bottom: "8%", right: "10%",
         borderRadius: "50%",
-        background: "radial-gradient(circle, rgba(195,207,216,0.60) 0%, transparent 70%)",
-        animation: "smokeBlob3 5.5s ease-in-out infinite",
+        background: "radial-gradient(circle, rgba(200,212,222,0.72) 0%, transparent 70%)",
+        animation: "smokeDrift2 7s ease-in-out infinite",
       }} />
-      {/* Edge blob bottom-left */}
       <div style={{
-        position: "absolute", width: "38%", height: "38%", bottom: "12%", left: "6%",
+        position: "absolute", width: "40%", height: "40%", top: "30%", right: "8%",
         borderRadius: "50%",
-        background: "radial-gradient(circle, rgba(188,200,210,0.55) 0%, transparent 70%)",
-        animation: "smokeBlob4 7s ease-in-out infinite",
+        background: "radial-gradient(circle, rgba(192,204,214,0.65) 0%, transparent 68%)",
+        animation: "smokeDrift3 5.5s ease-in-out infinite",
       }} />
-      {/* "SMK" label in center */}
-      <div style={{
-        position: "absolute", top: "50%", left: "50%",
-        transform: "translate(-50%, -50%)",
-        fontSize: Math.max(9, diameter * 0.12),
-        fontWeight: 900,
-        color: "rgba(80,95,105,0.9)",
-        textShadow: "0 1px 3px rgba(255,255,255,0.5)",
-        letterSpacing: "0.06em",
-        lineHeight: 1,
-        pointerEvents: "none",
-        zIndex: 3,
-      }}>SMK</div>
     </div>
   </>
 );

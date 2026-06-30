@@ -764,7 +764,7 @@ namespace
 		case WM_OVERLAY_OK:
 			g_overlay_pending = false;
 			g_overlay_running = true;
-			set_status(L"Overlay (WIP): F8 hide | F9 edit | M full map | , . opacity", true);
+			set_status(L"Overlay: F8 hide | DEL settings + drag | F9 settings", true);
 			refresh_buttons();
 			return 0;
 

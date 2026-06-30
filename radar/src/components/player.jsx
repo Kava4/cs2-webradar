@@ -1,5 +1,6 @@
 import { useRef, useState, useEffect } from "react";
-import { getRadarPosition, getEntityTranslate, playerColors } from "../utilities/utilities";
+import { getRadarPosition, getEntityTranslate, playerColors, teamEnum } from "../utilities/utilities";
+import MaskedIcon from "./maskedicon";
 
 // ── Smooth rotation tracker ───────────────────────────────────────────────────
 let playerRotations = [];
@@ -36,6 +37,7 @@ const Player = ({ playerData, mapData, mapWidth = 0, mapHeight = 0, localTeam, a
   const teamColor = isAlly ? (playerColors[playerData.m_color] ?? "#84c8ed") : "#FF4444";
   const isDead    = playerData.m_is_dead;
   const coneScale = settings?.coneLength ?? 1;
+  const hasBomb   = !isDead && playerData.m_team === teamEnum.terrorist && playerData.m_has_bomb;
 
   return (
     <div
@@ -113,7 +115,7 @@ const Player = ({ playerData, mapData, mapWidth = 0, mapHeight = 0, localTeam, a
           boxShadow: isDead
             ? "none"
             : `0 0 0 1px rgba(0,0,0,0.8), 0 0 ${dotPx * 3}px ${teamColor}55`,
-          background: "#0a0e1a",
+          background: isDead ? "rgba(10,14,26,0.35)" : "#0a0e1a",
           zIndex: 2,
         }}>
           {avatarUrl && (
@@ -153,6 +155,26 @@ const Player = ({ playerData, mapData, mapWidth = 0, mapHeight = 0, localTeam, a
           )}
         </div>
       </div>
+
+      {hasBomb && (
+        <div style={{
+          position: "absolute",
+          top: "-18%",
+          right: "-18%",
+          width: dotPx * 0.62,
+          height: dotPx * 0.62,
+          borderRadius: "50%",
+          background: "#ef4444",
+          border: "1.5px solid #b91c1c",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          boxShadow: "0 0 6px rgba(239,68,68,0.7)",
+          zIndex: 6,
+        }}>
+          <MaskedIcon path="./assets/icons/c4.svg" height={dotPx * 0.38} color="bg-white" />
+        </div>
+      )}
 
       {!isDead && playerData.m_health < 100 && (
         <div style={{

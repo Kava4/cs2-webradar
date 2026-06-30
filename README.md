@@ -87,9 +87,8 @@ The in-game overlay is experimental. Launcher button is marked **WIP**.
 | Key | Action |
 |-----|--------|
 | F8 | Show / hide overlay |
-| F9 | Edit mode (position widgets, save) |
-| M | Toggle full-map box |
-| `,` / `.` | Map opacity (edit mode) |
+| DEL / F9 | Settings mode — drag radar/list, toggles, sliders |
+| M | Toggle full-map box (settings mode) |
 
 ## License
 
