@@ -116,13 +116,22 @@ bool f::players::get_data(int32_t idx, c_cs_player_controller* player, c_cs_play
 	m_player_data["m_is_dead"]    = is_dead;
 	m_player_data["m_model_name"] = player_pawn->get_model_name();
 	m_player_data["m_steam_id"]   = std::to_string(steam_id);
-	m_player_data["m_money"]      = player->m_pInGameMoneyServices()->m_iAccount();
+	m_player_data["m_money"]      = [&]() {
+		const auto money_svc = player->m_pInGameMoneyServices();
+		return money_svc ? money_svc->m_iAccount() : 0;
+	}();
 	m_player_data["m_armor"]      = player_pawn->m_ArmorValue();
 	m_player_data["m_position"]["x"] = vec_origin.m_x;
 	m_player_data["m_position"]["y"] = vec_origin.m_y;
 	m_player_data["m_eye_angle"]  = player_pawn->m_angEyeAngles().m_y;
-	m_player_data["m_has_helmet"] = player_pawn->m_pItemServices()->m_bHasHelmet();
-	m_player_data["m_has_defuser"]= player_pawn->m_pItemServices()->m_bHasDefuser();
+	m_player_data["m_has_helmet"] = [&]() {
+		const auto items = player_pawn->m_pItemServices();
+		return items ? items->m_bHasHelmet() : false;
+	}();
+	m_player_data["m_has_defuser"]= [&]() {
+		const auto items = player_pawn->m_pItemServices();
+		return items ? items->m_bHasDefuser() : false;
+	}();
 	m_player_data["m_weapons"]    = nlohmann::json{};
 
 	m_player_data["m_flash_duration"] = player_pawn->m_flFlashDuration();

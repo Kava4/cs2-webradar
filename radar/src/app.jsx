@@ -228,6 +228,11 @@ const App = () => {
 
         if (parsedData.cmd === "shutdown") return;
 
+        console.info("[radar] ws frame:",
+          "m_map=", parsedData.m_map ?? "(missing)",
+          "players=", parsedData.m_players?.length ?? 0,
+          "local_team=", parsedData.m_local_team ?? null);
+
         // ── Reload command from C++ on map change ─────────────────────────────
         if (parsedData.cmd === "reload") {
           console.info("[radar] Map change detected — reloading page");
@@ -290,6 +295,7 @@ const App = () => {
           console.info(`[radar] Map ready: ${map}`);
         } catch (err) {
           console.error(`[radar] Failed to load ${map}:`, err);
+          setStatus(`Map assets missing for "${map}". Rebuild with build-aio.ps1.`);
         } finally {
           if (loadingForMap.current === map) loadingForMap.current = null;
         }
@@ -442,7 +448,7 @@ const App = () => {
       {/* ── Main content ─────────────────────────────────────────────────────── */}
       <div className="flex-1 overflow-y-auto overflow-x-hidden" style={{ padding: isMobile ? "12px" : "16px 20px" }}>
 
-        {playerArray.length > 0 && mapData ? (
+        {mapData ? (
           <>
             {/* ── Mobile layout ──────────────────────────────────────────────── */}
             {isMobile && (
@@ -535,8 +541,10 @@ const App = () => {
               color: "var(--text-secondary)", fontSize: 14, textAlign: "center",
               maxWidth: 400, lineHeight: 1.6,
             }}>
-              {mapData === undefined && playerArray.length === 0
-                ? "Waiting for game data…"
+              {mapData === undefined
+                ? "Waiting for game data… (join a match in CS2)"
+                : playerArray.length === 0
+                ? `Map loaded (${mapData?.name ?? "unknown"}) — waiting for players…`
                 : "Connecting to WebSocket…"}
             </div>
           </div>

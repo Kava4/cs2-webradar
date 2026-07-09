@@ -49,11 +49,17 @@ const std::string c_cs_player_pawn::get_model_name()
 
 c_cs_player_controller* c_cs_player_controller::get_local_player_controller()
 {
-	static auto offset = m_memory->find_pattern(CLIENT_DLL, GET_LOCAL_PLAYER_CONTROLLER)->rip().as<void*>();
-	if (!offset)
-		return {};
+	auto controller = offset_resolver::read_client_ptr<c_cs_player_controller*>(
+		cs2_dumper::offsets::client_dll::dwLocalPlayerController);
 
-	return m_memory->read_t<c_cs_player_controller*>(offset);
+	if (!controller)
+	{
+		const auto pattern = m_memory->find_pattern(CLIENT_DLL, GET_LOCAL_PLAYER_CONTROLLER);
+		if (pattern.has_value())
+			controller = m_memory->read_t<c_cs_player_controller*>(pattern->rip().as<void*>());
+	}
+
+	return controller;
 }
 
 c_cs_player_pawn* c_cs_player_controller::get_player_pawn()

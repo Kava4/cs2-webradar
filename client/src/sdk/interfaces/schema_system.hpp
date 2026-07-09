@@ -38,7 +38,8 @@ public:
 
 	c_utl_ts_hash<c_schema_type_declared_class*, 256, uint32_t> m_hash_classes() const
 	{
-		return m_memory->read_t<c_utl_ts_hash<c_schema_type_declared_class*, 256, uint32_t>>(reinterpret_cast<uintptr_t>(this) + 0x540);
+		return m_memory->read_t<c_utl_ts_hash<c_schema_type_declared_class*, 256, uint32_t>>(
+			reinterpret_cast<uintptr_t>(this) + schema::m_type_scope_hash_offset);
 	}
 };
 

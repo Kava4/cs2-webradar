@@ -38,6 +38,9 @@
 #include "sdk/datatypes/vector.hpp"
 
 /* sdk */
+#include "sdk/dump_offsets.hpp"
+#include "sdk/dump_interfaces.hpp"
+#include "sdk/offset_resolver.hpp"
 #include "sdk/entity_handle.hpp"
 #include "sdk/entity.hpp"
 

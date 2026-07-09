@@ -7,7 +7,7 @@
     "sync:maps": "node -e \"const fs=require('fs');const p=require('path');const s=p.resolve('..','client','data');const d=p.resolve('public','data');if(!fs.existsSync(s))throw new Error('Missing ../client/data');fs.rmSync(d,{recursive:true,force:true});fs.cpSync(s,d,{recursive:true});\"",
     "dev": "npm run sync:maps && concurrently \"node ws/app.js\" \"vite\"",
     "build": "vite build",
-    "build:all": "vite build && npm run copy:dist && npm run pkg:server",
+    "build:all": "npm run sync:maps && vite build && npm run copy:dist && npm run pkg:server",
     "copy:dist": "node -e \"const fs=require('fs');fs.rmSync('ws/dist',{recursive:true,force:true});fs.cpSync('dist','ws/dist',{recursive:true})\"",
     "pkg:server": "cd ws && npm install && npm run build-server",
     "preview": "vite preview",

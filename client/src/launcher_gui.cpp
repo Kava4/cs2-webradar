@@ -748,7 +748,7 @@ namespace
 			return 0;
 
 		case WM_INIT_FAILED:
-			set_status(L"Failed to start web server. Rebuild with npm run build:all", false, true);
+			set_status(L"Failed to start web server. Close other instances and retry.", false, true);
 			refresh_buttons();
 			return 0;
 

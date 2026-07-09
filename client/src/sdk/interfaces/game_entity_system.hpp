@@ -6,7 +6,7 @@ public:
 	template <typename T = c_base_entity*>
 	T get(int32_t idx)
 	{
-		return m_memory->read_t<T>(this->get_entity_by_idx(idx));
+		return reinterpret_cast<T>(this->get_entity_by_idx(idx));
 	}
 
 	template <typename T = c_base_entity*>
@@ -15,7 +15,7 @@ public:
 		if (!handle.is_valid())
 			return nullptr;
 
-		return m_memory->read_t<T>(this->get_entity_by_idx(handle.get_entry_idx()));
+		return reinterpret_cast<T>(this->get_entity_by_idx(handle.get_entry_idx()));
 	}
 
 private:
@@ -31,10 +31,11 @@ private:
 		if (!entry_list)
 			return nullptr;
 
-		const auto player_controller = (uint32_t*)(112i64 * (idx & 0x1ff) + entry_list);
-		if (!player_controller)
+		const auto slot = entry_list + 112i64 * (idx & 0x1ff);
+		const auto entity = m_memory->read_t<uintptr_t>(slot);
+		if (!entity)
 			return nullptr;
 
-		return player_controller;
+		return reinterpret_cast<void*>(entity);
 	}
 };

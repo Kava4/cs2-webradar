@@ -38,7 +38,7 @@ void f::grenades::get_grenade_info()
 {
 	f::m_data["m_grenades"] = nlohmann::json::array();
 
-	constexpr int32_t highest_idx = 1024;
+	const auto highest_idx = offset_resolver::highest_entity_index();
 	for (int32_t idx = 0; idx < highest_idx; idx++)
 	{
 		const auto entity = i::m_game_entity_system->get(idx);

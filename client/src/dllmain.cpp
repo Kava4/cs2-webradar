@@ -125,11 +125,23 @@ static bool start_radar(HINSTANCE instance, std::string& error_out)
 	g_radar.thread = std::thread([&]() {
 		while (g_running.load())
 		{
-			sdk::update();
-			f::run();
-			if (overlay::is_running())
-				overlay::render(f::m_data);
-			web_socket.send(f::m_data.dump());
+			try
+			{
+				sdk::update();
+				f::run();
+				if (overlay::is_running())
+					overlay::render(f::m_data);
+				web_socket.send(f::m_data.dump(-1, ' ', false, nlohmann::json::error_handler_t::replace));
+			}
+			catch (const std::exception& e)
+			{
+				LOG_ERROR("radar loop exception: %s", e.what());
+			}
+			catch (...)
+			{
+				LOG_ERROR("radar loop unknown exception");
+			}
+
 			std::this_thread::sleep_for(std::chrono::milliseconds(100));
 		}
 		web_socket.stop();
@@ -152,7 +164,6 @@ static int run(HINSTANCE instance)
 
 	appdata::ensure();
 	appdata::sync_maps();
-	LOG_INFO("app data folder: %s", appdata::root().string().c_str());
 
 	const int exit_code = launcher_gui::run(instance,
 		[&](std::string& error_out) { return start_radar(instance, error_out); },

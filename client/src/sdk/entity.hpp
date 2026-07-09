@@ -1,6 +1,6 @@
 // AimSync WebRadar
 // entity.hpp - game entity classes and schemas
-// Offsets verified against client_dll.hpp dump 2026-04-23
+// Offsets verified against client_dll.hpp dump 2026-07-09 (build 14168)
 
 #pragma once
 
@@ -110,7 +110,7 @@ public:
 // ── C_BaseEntity ──────────────────────────────────────────────────────────────
 // m_pGameSceneNode @ 0x330  (dump: C_BaseEntity->m_pGameSceneNode = 0x330)
 // m_iHealth        @ 0x34C  (dump: C_BaseEntity->m_iHealth        = 0x34C)
-// m_iTeamNum       @ 0x3EB  (dump: C_BaseEntity->m_iTeamNum       = 0x3EB)
+// m_iTeamNum       @ 0x3E7  (dump: C_BaseEntity->m_iTeamNum       = 0x3E7)
 // m_hOwnerEntity   @ 0x520  (dump: C_BaseEntity->m_hOwnerEntity   = 0x520)
 class c_base_entity : public c_entity_instance
 {
@@ -148,8 +148,8 @@ public:
 };
 
 // ── C_BasePlayerPawn ──────────────────────────────────────────────────────────
-// m_pWeaponServices @ 0x11E0  (dump: C_BasePlayerPawn->m_pWeaponServices = 0x11E0)
-// m_pItemServices   @ 0x11E8  (dump: C_BasePlayerPawn->m_pItemServices   = 0x11E8)
+// m_pWeaponServices @ 0x1208  (dump: C_BasePlayerPawn->m_pWeaponServices = 0x1208)
+// m_pItemServices   @ 0x1210  (dump: C_BasePlayerPawn->m_pItemServices   = 0x1210)
 class c_base_player_pawn : public c_base_entity
 {
 public:
@@ -159,7 +159,7 @@ public:
 
 // ── C_CSPlayerPawn ────────────────────────────────────────────────────────────
 // m_ArmorValue       @ 0x1C74  (dump: C_CSPlayerPawn->m_ArmorValue       = 0x1C74)
-// m_angEyeAngles     @ 0x3300  (dump: C_CSPlayerPawn->m_angEyeAngles     = 0x3300)
+// m_angEyeAngles     @ 0x3340  (dump: C_CSPlayerPawn->m_angEyeAngles     = 0x3340)
 // m_flFlashDuration  @ 0x1400  (dump: C_CSPlayerPawnBase->m_flFlashDuration     = 0x1400)
 // m_flFlashOverlayAlpha @ 0x13F4 (dump: C_CSPlayerPawnBase->m_flFlashOverlayAlpha = 0x13F4)
 class c_cs_player_pawn : public c_base_player_pawn
@@ -261,11 +261,11 @@ public:
 };
 
 // ── C_PlantedC4 ───────────────────────────────────────────────────────────────
-// m_bBombTicking     @ 0x1160  (dump: C_PlantedC4->m_bBombTicking     = 0x1160)
-// m_flC4Blow         @ 0x1190  (dump: C_PlantedC4->m_flC4Blow         = 0x1190)
-// m_bBombDefused     @ 0x11B4  (dump: C_PlantedC4->m_bBombDefused     = 0x11B4)
-// m_bBeingDefused    @ 0x119C  (dump: C_PlantedC4->m_bBeingDefused    = 0x119C)
-// m_flDefuseCountDown@ 0x11B0  (dump: C_PlantedC4->m_flDefuseCountDown= 0x11B0)
+// m_bBombTicking     @ 0x11A0  (dump: C_PlantedC4->m_bBombTicking     = 0x11A0)
+// m_flC4Blow         @ 0x11D0  (dump: C_PlantedC4->m_flC4Blow         = 0x11D0)
+// m_bBombDefused     @ 0x11F4  (dump: C_PlantedC4->m_bBombDefused     = 0x11F4)
+// m_bBeingDefused    @ 0x11DC  (dump: C_PlantedC4->m_bBeingDefused    = 0x11DC)
+// m_flDefuseCountDown@ 0x11F0  (dump: C_PlantedC4->m_flDefuseCountDown= 0x11F0)
 class c_planted_c4 : public c_base_entity
 {
 public:
@@ -290,8 +290,8 @@ public:
 
 // ── C_BasePlayerWeapon ────────────────────────────────────────────────────────
 // m_WeaponData : via C_BaseEntity->m_nSubclassID + 0x08  (unchanged pattern)
-// m_iClip1     @ 0x16D8  (dump: C_BasePlayerWeapon->m_iClip1 = 0x16D8)
-// m_pReserveAmmo @ 0x16E0 (dump: C_BasePlayerWeapon->m_pReserveAmmo = 0x16E0, int32[2] — read element[0])
+// m_iClip1     @ 0x1700  (dump: C_BasePlayerWeapon->m_iClip1 = 0x1700)
+// m_pReserveAmmo @ 0x1708 (dump: C_BasePlayerWeapon->m_pReserveAmmo = 0x1708, int32[2] — read element[0])
 class c_base_player_weapon : public c_base_entity
 {
 public:

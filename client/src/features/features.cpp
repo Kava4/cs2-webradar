@@ -1,4 +1,21 @@
 #include "pch.hpp"
+#include "utils/appdata.hpp"
+#include "utils/map_utils.hpp"
+
+static std::string normalize_map_for_radar(const std::string& raw)
+{
+	if (!map_utils::looks_like_cs2_map(raw))
+		return {};
+
+	auto name = appdata::normalize_map_name(raw);
+	if (name.size() > 4 && name.ends_with(".bsp"))
+		name.resize(name.size() - 4);
+
+	if (!map_utils::looks_like_cs2_map(name))
+		return {};
+
+	return name;
+}
 
 static void resolve_game_rules_proxy()
 {
@@ -27,12 +44,19 @@ static void resolve_game_rules_proxy()
 
 void f::run()
 {
+	if (!i::m_game_entity_system || !i::m_global_vars)
+		return;
+
 	m_data = nlohmann::json{};
 	m_player_data = nlohmann::json{};
 
 	resolve_game_rules_proxy();
 	f::roundinfo::get_round_info();
 	get_map();
+
+	get_player_info();
+	compute_team_stats();
+	f::grenades::get_grenade_info();
 
 	if (!sdk::m_local_controller)
 		return;
@@ -42,64 +66,85 @@ void f::run()
 		return;
 
 	m_data["m_local_team"] = local_team;
+}
 
-	get_player_info();
-	compute_team_stats();
-	f::grenades::get_grenade_info();
+static c_global_vars* refresh_global_vars()
+{
+	return offset_resolver::resolve_global_vars();
+}
+
+static bool is_player_controller(c_base_entity* entity)
+{
+	const auto class_name = entity->get_schema_class_name();
+	if (!class_name.empty())
+		return fnv1a::hash(class_name) == fnv1a::hash("CCSPlayerController");
+
+	const auto controller = reinterpret_cast<c_cs_player_controller*>(entity);
+	if (!controller->m_hPawn().is_valid())
+		return false;
+
+	const auto name = controller->m_sSanitizedPlayerName();
+	if (name.empty())
+		return false;
+
+	const auto team = controller->m_iTeamNum();
+	return team == e_team::t || team == e_team::ct;
 }
 
 void f::get_map()
 {
-	static bool s_reload_sent = false;
+	static std::string s_cached_map;
 
-	const auto map_name = i::m_global_vars->m_map_name();
-	if (map_name.empty() || map_name.find("<empty>") != std::string::npos)
+	i::m_global_vars = refresh_global_vars();
+
+	const auto gv_base = i::m_global_vars
+		? reinterpret_cast<uintptr_t>(i::m_global_vars)
+		: 0u;
+	const auto raw_map = map_utils::resolve_map_name(gv_base);
+
+	auto map_name = normalize_map_for_radar(raw_map);
+	if (map_name.empty() && !s_cached_map.empty())
 	{
-		if (!s_reload_sent)
-		{
-			utils::send_reload();
-			s_reload_sent = true;
-		}
-
-		m_data["m_map"] = "invalid";
-
-		LOG_WARNING("failed to get map name! updating m_global_vars");
-		i::m_global_vars = m_memory->read_t<c_global_vars*>(
-			m_memory->find_pattern(CLIENT_DLL, GET_GLOBAL_VARS)->rip().as<c_global_vars*>());
-		i::m_game_rules_proxy = nullptr;
+		m_data["m_map"] = s_cached_map;
 		return;
 	}
 
-	s_reload_sent = false;
+	if (map_name.empty())
+	{
+		m_data["m_map"] = s_cached_map.empty() ? "invalid" : s_cached_map;
+		return;
+	}
+
+	const auto map_changed = (map_name != s_cached_map);
+	s_cached_map = map_name;
 	m_data["m_map"] = map_name;
+
+	if (map_changed)
+	{
+		i::m_game_rules_proxy = nullptr;
+		utils::send_reload();
+	}
+
+	appdata::ensure_map_assets(map_name);
 }
 
 void f::get_player_info()
 {
 	m_data["m_players"] = nlohmann::json::array();
 
-	const auto highest_idx = 1024;
+	const auto highest_idx = offset_resolver::highest_entity_index();
 	for (int32_t idx = 0; idx < highest_idx; idx++)
 	{
 		const auto entity = i::m_game_entity_system->get(idx);
 		if (!entity)
 			continue;
 
-		const auto entity_handle = entity->get_ref_e_handle();
-		if (!entity_handle.is_valid())
-			continue;
-
 		const auto class_name = entity->get_schema_class_name();
-		if (class_name.empty())
-			continue;
+		const auto hashed_class_name = class_name.empty() ? 0u : fnv1a::hash(class_name);
 
-		const auto hashed_class_name = fnv1a::hash(class_name);
-
-		if (hashed_class_name == fnv1a::hash("CCSPlayerController"))
+		if (is_player_controller(entity))
 		{
-			const auto player = i::m_game_entity_system->get<c_cs_player_controller*>(entity_handle);
-			if (!player)
-				continue;
+			const auto player = reinterpret_cast<c_cs_player_controller*>(entity);
 
 			const auto player_pawn = player->get_player_pawn();
 			if (!player_pawn)

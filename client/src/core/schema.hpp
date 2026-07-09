@@ -31,6 +31,8 @@
 
 namespace schema
 {
+	inline std::ptrdiff_t m_type_scope_hash_offset = 0x540;
+
 	bool setup();
 	uint32_t get_offset(const fnv1a_t hashed_field_name);
 }
